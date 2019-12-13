@@ -8,9 +8,15 @@ class UserController {
       email: Yup.string()
         .email()
         .required(),
-      age: Yup.number().required(),
-      weight: Yup.number().required(),
-      height: Yup.number().required(),
+      age: Yup.number()
+        .max(120)
+        .required(),
+      weight: Yup.number()
+        .max(200)
+        .required(),
+      height: Yup.number()
+        .max(400)
+        .required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -38,9 +44,15 @@ class UserController {
       email: Yup.string()
         .email()
         .required(),
-      age: Yup.number().required(),
-      weight: Yup.number().required(),
-      height: Yup.number().required(),
+      age: Yup.number()
+        .max(120)
+        .required(),
+      weight: Yup.number()
+        .max(200)
+        .required(),
+      height: Yup.number()
+        .max(400)
+        .required(),
     });
 
     if (!(await schema.isValid(req.body))) {
