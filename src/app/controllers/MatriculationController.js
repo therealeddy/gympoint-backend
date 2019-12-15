@@ -1,11 +1,4 @@
-import {
-  parseISO,
-  isBefore,
-  setSeconds,
-  setMinutes,
-  setHours,
-  addMonths,
-} from 'date-fns';
+import { parseISO, isBefore, startOfDay, addMonths } from 'date-fns';
 import * as Yup from 'yup';
 import Matriculation from '../models/Matriculation';
 import Student from '../models/Student';
@@ -72,10 +65,7 @@ class MatriculationController {
         .json({ error: 'Enrollment already registered for this student' });
     }
 
-    const dateFormat = setSeconds(
-      setMinutes(setHours(parseISO(start_date), 0), 0),
-      0
-    );
+    const dateFormat = startOfDay(parseISO(start_date));
 
     if (isBefore(dateFormat, new Date())) {
       return res.status(400).json({ error: 'Past dates are not permitted' });
@@ -151,10 +141,7 @@ class MatriculationController {
         .json({ error: 'This student already has an enrollment' });
     }
 
-    const dateFormat = setSeconds(
-      setMinutes(setHours(parseISO(start_date), 0), 0),
-      0
-    );
+    const dateFormat = startOfDay(parseISO(start_date));
 
     if (isBefore(dateFormat, new Date())) {
       return res.status(400).json({ error: 'Past dates are not permitted' });
