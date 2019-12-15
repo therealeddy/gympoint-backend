@@ -11,6 +11,9 @@ import Matriculation from '../models/Matriculation';
 import Student from '../models/Student';
 import Plan from '../models/Plan';
 
+import MatriculationMail from '../jobs/MatriculationMail';
+import Queue from '../../lib/Queue';
+
 class MatriculationController {
   async index(req, res) {
     const matriculation = await Matriculation.findAll({
@@ -88,6 +91,16 @@ class MatriculationController {
       start_date: dateFormat,
       end_date,
       price,
+    });
+
+    await Queue.add(MatriculationMail.key, {
+      matriculation: {
+        student,
+        plan,
+        start_date: dateFormat,
+        end_date,
+        total_price: price,
+      },
     });
 
     return res.json(matriculation);

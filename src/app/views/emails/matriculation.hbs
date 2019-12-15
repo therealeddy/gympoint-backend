@@ -1,0 +1,88 @@
+<strong>Olá, {{ name }}</strong>
+<p>Segue detalhes sobre sua matricula na Gympoint: </p>
+
+<p><strong>Informações do aluno</strong></p>
+
+<table border="1" cellpadding="10" cellspacing="0" bordercolor="#dedede">
+  <tr>
+    <th style="text-align: left">
+      Idade
+    </th>
+    <td>
+      {{ age }}
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: left">
+      Peso
+    </th>
+    <td>
+      {{ weight }}
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: left">
+      Altura
+    </th>
+    <td>
+      {{ height }}
+    </td>
+  </tr>
+</table>
+
+<br>
+
+<p><strong>Informações do plano</strong></p>
+
+
+<table border="1" cellpadding="10" cellspacing="0" bordercolor="#dedede">
+  <tr>
+    <th style="text-align: left">
+      Plano
+    </th>
+    <td>
+      {{ plan_title }}
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: left">
+      Duração
+    </th>
+    <td>
+      {{ plan_duration }} Mês (es)
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: left">
+      Preço
+    </th>
+    <td>
+      R$ {{ plan_price }}/mês
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: left">
+      Data de Início
+    </th>
+    <td>
+      {{ start_date }}
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: left">
+      Data de Termino
+    </th>
+    <td>
+      {{ end_date }}
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: left">
+      Preço total
+    </th>
+    <td>
+      R$ {{ total_price }}
+    </td>
+  </tr>
+</table border="1" cellpadding="10" cellspacing="0">
+
