@@ -6,6 +6,7 @@ import {
   setHours,
   addMonths,
 } from 'date-fns';
+import * as Yup from 'yup';
 import Matriculation from '../models/Matriculation';
 import Student from '../models/Student';
 import Plan from '../models/Plan';
@@ -14,12 +15,34 @@ class MatriculationController {
   async index(req, res) {
     const matriculation = await Matriculation.findAll({
       attributes: ['student_id', 'plan_id', 'start_date', 'end_date', 'price'],
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name', 'email', 'age', 'weight', 'height'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'duration', 'price'],
+        },
+      ],
     });
 
     return res.json(matriculation);
   }
 
   async store(req, res) {
+    const schema = Yup.object().shape({
+      student_id: Yup.number().required(),
+      plan_id: Yup.number().required(),
+      start_date: Yup.date().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
     const { student_id, plan_id, start_date } = req.body;
 
     const student = await Student.findByPk(student_id);
@@ -57,23 +80,39 @@ class MatriculationController {
 
     const end_date = addMonths(dateFormat, plan.duration);
 
-    const price = plan.duration * plan.price;
+    const price = plan.totalPrice();
 
-    const matriculation = {
+    const matriculation = await Matriculation.create({
       student_id,
       plan_id,
       start_date: dateFormat,
       end_date,
       price,
-    };
-
-    await Matriculation.create(matriculation);
+    });
 
     return res.json(matriculation);
   }
 
   async update(req, res) {
+    const schema = Yup.object().shape({
+      student_id: Yup.number().required(),
+      plan_id: Yup.number().required(),
+      start_date: Yup.date().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
     const { student_id, plan_id, start_date } = req.body;
+
+    const id_matriculation = Number(req.params.id);
+
+    const matriculation = await Matriculation.findByPk(req.params.id);
+
+    if (!matriculation) {
+      return res.status(400).json({ error: 'Matriculation does not exists' });
+    }
 
     const student = await Student.findByPk(student_id);
 
@@ -87,22 +126,13 @@ class MatriculationController {
       return res.status(400).json({ error: 'Plan does not exists' });
     }
 
-    const matriculation = await Matriculation.findByPk(req.params.id);
-
-    if (!matriculation) {
-      return res.status(400).json({ error: 'Matriculation does not exists' });
-    }
-
     const matriculationExists = await Matriculation.findOne({
       where: {
         student_id,
       },
     });
 
-    if (
-      matriculationExists &&
-      matriculationExists.id !== Number(req.params.id)
-    ) {
+    if (matriculationExists && matriculationExists.id !== id_matriculation) {
       return res
         .status(400)
         .json({ error: 'This student already has an enrollment' });
@@ -119,9 +149,9 @@ class MatriculationController {
 
     const end_date = addMonths(dateFormat, plan.duration);
 
-    const price = plan.duration * plan.price;
+    const price = plan.totalPrice();
 
-    await matriculation.update({
+    const matricularion = await matriculation.update({
       student_id,
       plan_id,
       start_date: dateFormat,
@@ -129,13 +159,7 @@ class MatriculationController {
       price,
     });
 
-    return res.json({
-      student_id,
-      plan_id,
-      start_date: dateFormat,
-      end_date,
-      price,
-    });
+    return res.json(matricularion);
   }
 
   async delete(req, res) {
